@@ -1,11 +1,26 @@
-screen 800,800
+input screenx, "enter screen x size: "
+let screenx, int(screenx)
+input screeny, "enter screen y size: "
+let screeny, int(screeny)
+input mazex, "enter maze x size: "
+let mazex, int(mazex)
+input mazey, "enter maze y size: "
+let mazey, int(mazey)
+
+print "Preparing maze... "
+let squarex, screenx/mazex
+let squarey, screeny/mazey
+
+screen screenx, screeny
+fullscreen 1
 title "Maze generator"
-dim sides, 80, 80
-dim downs, 80, 80
-dim visited, 80, 80
-for x, 0, 79
-	for y, 0, 79
-		if (x = 0) or (x = 79) or (y = 0) or (y = 79)
+keyrepeat 1, 200
+dim sides, mazex, mazey
+dim downs, mazex, mazey
+dim visited, mazex, mazey
+for x, 0, mazex-1
+	for y, 0, mazey-1
+		if (x = 0) or (x = (mazex-1)) or (y = 0) or (y = (mazey-1))
 			let visited(x,y), 1
 		else
 			let visited(x,y), 0
@@ -15,8 +30,8 @@ for x, 0, 79
 	end
 end
 
-dim stackx, 80*80+1
-dim stacky, 80*80+1
+dim stackx, mazex*mazey+1
+dim stacky, mazex*mazey+1
 let spointerx, 1
 let spointery, 1
 
@@ -26,9 +41,20 @@ let stackx(0), 1
 let stacky(0), 1
 
 color 0,0,0
-rect 0,0,800,800
+rect 0,0,screenx, screeny
 color 255,255,255
 update
+
+for mx, 1, mazex-2
+	for my, 1, mazey-2
+		let xc, mx*squarex
+		let yc, my*squarey
+		line int(xc), int(yc+squarey), int(xc+squarex), int(yc+squarey),3
+		line int(xc+squarex), int(yc), int(xc+squarex), int(yc+squarey),3
+		line int(xc), int(yc), int(xc+squarex), int(yc),3
+		line int(xc), int(yc), int(xc), int(yc+squarey),3
+	end
+end
 
 while spointerx != 0
 	let visited(px, py), 1
@@ -57,8 +83,10 @@ while spointerx != 0
 	end
 end
 
-while clickx() = -1
-end
+let px, 1
+let py, 1
+let dir, 4
+gosub render
 
 goto game
 
@@ -105,63 +133,66 @@ label pop
 return
 
 label render
-	let xc, px*10
-	let yc, py*10
-	rect xc, yc, xc+5, yc+5
+	let xc, px*squarex
+	let yc, py*squarey
+	color 0,0,0
 	if dir = 1
-		rect xc+5, yc, xc+10, yc+5
+		line int(xc+squarex), int(yc+1), int(xc+squarex), int(yc+squarey-1),3
 	end
 	if dir = 2
-		rect xc, yc+5, xc+5, yc+10
+		line int(xc+1), int(yc+squarey), int(xc+squarex-1), int(yc+squarey),3
 	end
 	if dir = 3
-		rect xc-5, yc, xc, yc+5
+		line int(xc), int(yc+1), int(xc), int(yc+squarey-1),3
 	end
 	if dir = 4
-		rect xc, yc-5, xc+5, yc
+		line int(xc+1), int(yc), int(xc+squarex-1), int(yc),3
 	end
+	color 255,255,255
 	update
 return
 
 label rendergame
-	let xc, npx*10
-	let yc, npy*10
-	let lxc, lastpx*10
-	let lyc, lastpy*10
-	let axc, ax*10
-	let ayc, ay*10
-	color 255, 255, 255
-	rect lxc, lyc, lxc+5, lyc+5
+	let xc, npx*squarex
+	let yc, npy*squarey
+	let lxc, lastpx*squarex
+	let lyc, lastpy*squarey
+	let axc, ax*squarex
+	let ayc, ay*squarey
+	color 0, 0, 0
+	rect int(lxc+4), int(lyc+4), int(lxc+squarex-4), int(lyc+squarey-4)
 	color 0,255,0
-	rect axc, ayc, axc+5, ayc+5
+	rect int(axc+4), int(ayc+4), int(axc+squarex-4), int(ayc+squarey-4)
 	color 0,0,255
-	rect xc, yc, xc+5, yc+5
+	rect int(xc+4), int(yc+4), int(xc+squarex-4), int(yc+squarey-4)
 	update
 return
 
 label createapple
-	let ax, randint(1, 78)
-	let ay, randint(1, 78)
-	let axc, ax*10
-	let ayc, ay*10
+	let ax, randint(1, mazex-2)
+	let ay, randint(1, mazey-2)
+	let axc, ax*squarex
+	let ayc, ay*squarey
 	color 0,255,0
-	rect axc, ayc, axc+5, ayc+5
-	print ax, ay
+	rect int(axc+4), int(ayc+4), int(axc+squarex-4), int(ayc+squarey-4)
 	update
 return
 
 label game
 let px, 1
 let py, 1
+let npx, 1
+let npy, 1
 gosub createapple
+gosub rendergame
 let done, 0
-while not(done)
+while not(winexit()) and not(done)
 	let k, keypress()
 	let lastpx, px
 	let lastpy, py
 	let npx, px
 	let npy, py
-	if k != -1
+	if not(k < 0) and not(k > 255)
 		if chr(k) = "q"
 			let done, 1
 		end
