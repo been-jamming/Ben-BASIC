@@ -1,0 +1,42 @@
+---Ben-BASIC Help---
+
+This is a quick-start tutorial for how to use Ben-BASIC
+
+First, run Interpret.py using your python interpreter. You will get a prompt such as the one below:
+
+1) Command Line
+2) Run File
+enter choice: 
+
+If you type "1" and hit enter, you will be sent into the command line which will something like this:
+
+>>> 
+
+Here, you can type commands such as 'print "hello world!"', and the Interpreter will run them.
+
+There are also a couple of special abilities exclusive to the command line.
+
+1. In the command line, not only can you run single lines, but you can also run programs composed of multiple lines.
+Simply begin your input with the line number you wish to edit, and then type your line. For instance, if I typed:
+
+>>> 1 input name, "enter your name: "
+>>> 2 print "hello "+name
+
+Then I would have made a program that asks a user for their name and then says hello to them.
+
+2. Special Commands of the Command Line include the following:
+
+-"end" :
+If you type "end" (no spaces, just those characters), then you will exit the command line.
+
+-"delete" :
+This command deletes the program you have entered into the command line.
+
+-"list arg1, arg2"
+This command lists a section of your program. arg1 and arg2 are optional. arg1 is the line to start at, and arg2 is the line to end at.
+
+-"insert arg1, arg2"
+This command inserts a line of code corresponding to what was entered as arg2 at line arg1, incrementing all other lines below it.
+
+
+And that's it for the quick-start tutorial!
